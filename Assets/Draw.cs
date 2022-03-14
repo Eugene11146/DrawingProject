@@ -1,41 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Draw : MonoBehaviour
 {
-    [SerializeField] private Texture2D _tex;
+    [SerializeField] private Texture2D _texture;
     [Range(2, 512)]
     [SerializeField] private int _resolution = 28;
-
     [SerializeField] private Color _color;
-
     [Range(2, 30)]
     [SerializeField] private int _brushSize = 8;
 
-
     void OnValidate()
     {
-        if (_tex == null)
+        if (_texture == null)
         {
-            _tex = new Texture2D(_resolution, _resolution);
+            _texture = new Texture2D(_resolution, _resolution);
         }
-        if (_tex.width != _resolution)
+        if (_texture.width != _resolution)
         {
-            _tex.Resize(_resolution, _resolution);
+            _texture.Resize(_resolution, _resolution);
         }
-
-        GetComponent<Renderer>().material.mainTexture = _tex;
-
-        _tex.filterMode = FilterMode.Point;
-
-        _tex.Apply();
-
+        GetComponent<Renderer>().material.mainTexture = _texture;
+        _texture.filterMode = FilterMode.Point;
+        _texture.Apply();
     }
 
     void Update()
     {
-
         if (Input.GetMouseButton(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -44,10 +34,8 @@ public class Draw : MonoBehaviour
             {
                 int rayX = (int)(hit.textureCoord.x * _resolution);
                 int rayY = (int)(hit.textureCoord.y * _resolution);
-
                 DrawCircle(rayX, rayY);
-
-                _tex.Apply();
+                _texture.Apply();
             }
         }
     }
@@ -64,7 +52,7 @@ public class Draw : MonoBehaviour
 
                 if(x2+y2<r2)
                 {
-                    _tex.SetPixel(rayX + x - _brushSize / 2, rayY + y - _brushSize / 2, _color);
+                    _texture.SetPixel(rayX + x - _brushSize / 2, rayY + y - _brushSize / 2, _color);
                 }
             }
         }
