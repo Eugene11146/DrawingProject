@@ -1,13 +1,20 @@
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class Draw : MonoBehaviour
 {
     [SerializeField] private Texture2D _texture;
     [Range(2, 512)]
     [SerializeField] private int _resolution = 28;
+    [SerializeField] private Slider _sliderResolution;
     [SerializeField] private Color _color;
     [Range(2, 30)]
     [SerializeField] private int _brushSize = 8;
+    [SerializeField] private Slider _sliderBrush;
+    
+    private bool _isMobile = true;
+
 
     void OnValidate()
     {
@@ -26,9 +33,22 @@ public class Draw : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && _isMobile == false)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100f))
+            {
+                int rayX = (int)(hit.textureCoord.x * _resolution);
+                int rayY = (int)(hit.textureCoord.y * _resolution);
+                DrawCircle(rayX, rayY);
+                _texture.Apply();
+            }
+        }
+
+        if (_isMobile == true)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(DragTracking.dragPosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f))
             {
@@ -56,5 +76,33 @@ public class Draw : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ColorMenu(int ValueColor)
+    {
+        if( ValueColor == 0 )
+        {
+            _color = Color.black;
+        }
+        if (ValueColor == 1)
+        {
+            _color = Color.blue;
+        }
+        if (ValueColor == 2)
+        {
+            _color = Color.green;
+        }
+    }
+
+    public void SlidreBrushSize()
+    {
+        _brushSize = (int)_sliderBrush.value;
+    }
+
+    public void SlidreReolution()
+    {
+        _resolution = (int)_sliderResolution.value;
+        _texture.Resize(_resolution, _resolution);
+        
     }
 }
